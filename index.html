@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunyuan3D-Buffalo 1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!--    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Favicon and App Icons -->
+<link rel="icon" type="image/png" sizes="16x16" href="statics/favicon_io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="statics/favicon_io/favicon-32x32.png">
+<link rel="icon" type="image/x-icon" href="statics/favicon_io/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="statics/favicon_io/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="statics/favicon_io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="statics/favicon_io/android-chrome-512x512.png">
+
+<!-- Optional: Progressive Web App metadata -->
+<link rel="manifest" href="statics/favicon_io/site.webmanifest">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --bg-dark: #050505;
+        --bg-darker: #030303;
+        --primary: #00e7ff;
+        --primary-dark: #00b8cc;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark);
+        color: #e5e5e5;
+        scroll-behavior: smooth;
+    }
+
+    .dark-gradient {
+        background: linear-gradient(180deg, var(--bg-dark) 0%, #111111 100%);
+    }
+
+    .model-card {
+        background: rgba(20, 20, 22, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .model-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px -10px rgba(0, 231, 255, 0.2);
+        border-color: rgba(0, 231, 255, 0.3);
+    }
+
+    .neon-text {
+        text-shadow: 0 0 10px rgba(0, 231, 255, 0.5);
+    }
+
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(90deg, rgba(40, 40, 45, 0) 0%, rgba(40, 40, 45, 0.8) 50%, rgba(40, 40, 45, 0) 100%);
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+    }
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .nav-bar {
+        background: rgba(10, 10, 12, 0.9);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-glow {
+        transition: all 0.3s ease;
+    }
+
+    .btn-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px -3px rgba(0, 231, 255, 0.4);
+    }
+
+    .filter-btn {
+        transition: all 0.2s ease;
+    }
+
+    .filter-btn.active {
+        background: rgba(0, 231, 255, 0.1);
+        border-color: rgba(0, 231, 255, 0.5);
+        color: var(--primary);
+    }
+
+    .pagination-btn {
+        transition: all 0.2s ease;
+    }
+
+    .pagination-btn:hover:not(.disabled) {
+        background: rgba(0, 231, 255, 0.1);
+        border-color: rgba(0, 231, 255, 0.3);
+    }
+
+    .pagination-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .model-viewer-container {
+        --poster-color: transparent;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 100;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background-color: var(--bg-darker);
+        border-radius: 12px;
+        max-width: 90%;
+        width: 1200px;
+        margin: 2rem auto;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 231, 255, 0.25);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .close-modal:hover {
+        color: var(--primary);
+    }
+
+    /* View mode buttons */
+    .view-mode-btn {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .view-mode-btn button {
+        background: rgba(20, 20, 22, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .view-mode-btn button:hover {
+        background: rgba(0, 231, 255, 0.2);
+        border-color: rgba(0, 231, 255, 0.5);
+    }
+
+    .view-mode-btn button.active {
+        background: rgba(0, 231, 255, 0.3);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 231, 255, 0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 231, 255, 0.5);
+    }
+
+    /* Model comparison layout */
+    .model-comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        height: 600px;
+    }
+
+    .model-viewport {
+        position: relative;
+        height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .model-comparison {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+    }
+
+    .feature-tab {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .feature-tab.active {
+        background: rgba(0, 231, 255, 0.1);
+        border-color: rgba(0, 231, 255, 0.5);
+        color: var(--primary);
+        box-shadow: 0 0 15px rgba(0, 231, 255, 0.2);
+    }
+
+    .case-selector.active {
+        border-color: var(--primary);
+        background: rgba(0, 231, 255, 0.05);
+    }
+
+    .tab-content {
+        animation: fadeIn 0.4s ease-out;
+    }
+</style>
+
+<style>
+    /* Add these styles */
+    .scaling-tab {
+        transition: all 0.3s ease;
+    }
+
+    .scaling-tab.active {
+        background: linear-gradient(135deg, #00e7ff22, #0099ff22);
+        color: #00e7ff;
+        box-shadow: 0 0 15px rgba(0, 231, 255, 0.2);
+    }
+
+    .curve-container {
+        background: rgba(20, 20, 22, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    #scaling-curve {
+        animation: drawCurve 2s ease-out forwards;
+    }
+
+    @keyframes drawCurve {
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    .curve-points circle {
+        filter: drop-shadow(0 0 4px rgba(0, 231, 255, 0.5));
+        transition: all 0.3s ease;
+    }
+
+    /* 新增样式 */
+    #curve-tooltip {
+        position: absolute;
+        background: rgba(20, 25, 30, 0.95);
+        color: #00e7ff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        border: 1px solid rgba(0, 231, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    #curve-tooltip.visible {
+        opacity: 1;
+    }
+
+    #curve-tooltip-fix {
+        position: absolute;
+        background: rgba(20, 25, 30, 0.95);
+        color: #00e7ff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        border: 1px solid rgba(0, 231, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    #curve-tooltip-fix.visible {
+        opacity: 1;
+    }
+
+    .scaling-point {
+        transition: all 0.3s ease;
+    }
+
+    /* 新增样式 */
+    .meta-info {
+        background: rgba(20, 25, 30, 0.9);
+        backdrop-filter: blur(10px);
+    }
+
+    .opacity-50 {
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+</style>
+
+
+<style>
+    /* Add to existing styles */
+    .shimmer {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shimmer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(90deg,
+                transparent,
+                rgba(0, 231, 255, 0.2),
+                transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        100% {
+            left: 200%;
+        }
+    }
+
+    .model-viewport {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .model-viewport:hover {
+        box-shadow: 0 0 30px rgba(0, 231, 255, 0.1);
+        border-color: rgba(0, 231, 255, 0.3);
+    }
+</style>
+
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section id="overview" class="dark-gradient pt-24 pb-16 px-6">
+        <div class="max-w-6xl mx-auto text-center fade-in">
+
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 tracking-tight neon-text">
+            Hunyuan3D-Buffalo 1.0
+        </h1>
+
+        <p class="text-lg md:text-2xl text-gray-300 max-w-4xl mx-auto leading-snug mb-10">
+            A Unified Multimodal Model for Scalable 3D Generation,<br class="hidden md:block">
+            Understanding, and Editing
+        </p>
+
+        <p class="text-gray-300 text-sm md:text-lg leading-relaxed max-w-5xl mx-auto mb-5">
+            Junliang Ye<sup>*</sup>, Kenkun Liu<sup>*</sup>, Guocun Wang<sup>*</sup>,
+            Yang Li<sup>*†</sup>, Yansong Qu<sup>*</sup>, Chunshi Wang<sup>*</sup>,<br>
+            Jingwei Xu, Yunhan Yang, Zibo Zhao, Jiachen Xu, Xin Huang, Yifei Feng,
+            Jiaao Yu, Lifu Wang,<br class="hidden md:block">
+            Zhihao Liang, Zhuo Chen<sup>†</sup>, Chunchao Guo<sup>†</sup>
+        </p>
+
+        <p class="text-gray-400 text-base md:text-lg font-semibold mb-8">
+            Tencent Hunyuan3D
+        </p>
+
+        <!-- Contribution Notes -->
+        <div class="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-white/[0.03] px-6 md:px-8 py-6 text-left">
+            <div class="space-y-5 text-xs md:text-sm leading-relaxed">
+
+                <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-2 md:gap-6">
+                    <p class="text-gray-300 font-semibold">
+                        <sup>†</sup> Project Leaders
+                    </p>
+                    <p class="text-gray-400">
+                        Yang Li, Zhuo Chen, Chunchao Guo
+                    </p>
+                </div>
+
+                <div class="border-t border-white/10 pt-5">
+                    <p class="text-gray-300 font-semibold mb-4">
+                        <sup>*</sup> Core Contributors
+                    </p>
+
+                    <div class="space-y-4">
+
+                        <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-2 md:gap-6">
+                            <p class="italic text-gray-300">3D Editing</p>
+                            <p class="text-gray-400">
+                                Junliang Ye, Guocun Wang, Yansong Qu, Yang Li, Chunshi Wang, Kenkun Liu
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-2 md:gap-6">
+                            <p class="italic text-gray-300">Text-to-3D</p>
+                            <p class="text-gray-400">
+                                Kenkun Liu, Junliang Ye, Yang Li
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-2 md:gap-6">
+                            <p class="italic text-gray-300">3D Understanding</p>
+                            <p class="text-gray-400">
+                                Guocun Wang, Junliang Ye, Kenkun Liu, Yang Li
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Image Showcase -->
+<section id="showcase" class="py-20 bg-black px-6">
+    <div class="max-w-4xl mx-auto text-center">
+        <div class="mb-12 fade-in">
+            <!-- <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Image Showcase</h2> -->
+            <p class="text-gray-400 text-lg">A unified multimodal model for 3D generation, understanding, and editing.</p>
+        </div>
+
+        <!-- Image Container -->
+        <div class="relative fade-in">
+            <img id="showcase-image" src="statics/images/Teaser.png" alt="Showcase Image"
+                class="w-full rounded-2xl shadow-xl object-cover transition-all duration-500">
+
+            <!-- Left Button -->
+            <button id="prev-btn"
+                class="absolute left-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition">
+                &#10094;
+            </button>
+
+            <!-- Right Button -->
+            <button id="next-btn"
+                class="absolute right-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition">
+                &#10095;
+            </button>
+        </div>
+
+        <!-- Dots Indicator -->
+        <div class="flex justify-center mt-6 space-x-2">
+            <span class="dot w-3 h-3 rounded-full bg-gray-500"></span>
+            <span class="dot w-3 h-3 rounded-full bg-gray-700"></span>
+            <span class="dot w-3 h-3 rounded-full bg-gray-700"></span>
+            <span class="dot w-3 h-3 rounded-full bg-gray-700"></span>
+            <span class="dot w-3 h-3 rounded-full bg-gray-700"></span>
+            <span class="dot w-3 h-3 rounded-full bg-gray-700"></span>
+            
+        </div>
+    </div>
+</section>
+
+<!-- Hunyuan3D-Buffalo Pipeline Section -->
+<section id="pipeline" class="py-24 bg-black px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <!-- Left Text Content -->
+        <div class="fade-in text-left space-y-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-white">
+                Hunyuan3D-Buffalo 1.0 Pipeline
+            </h2>
+
+            <p class="text-gray-400 text-lg leading-relaxed">
+                Hunyuan3D-Buffalo 1.0 is a unified 3D multimodal framework for
+                3D understanding, text-to-3D generation, and instruction-guided 3D editing.
+                It supports diverse tasks within a single pipeline by connecting language,
+                3D representations, and generative 3D modules.
+            </p>
+
+            <p class="text-gray-400 text-lg leading-relaxed">
+                The framework uses a shared Hunyuan3D-VLM backbone to bridge 3D QA,
+                grounding, generation, and editing. Based on this unified representation,
+                Hunyuan3D DiT modules further enable scalable multimodal generation and
+                high-quality 3D editing.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <p class="text-cyan-300 text-sm font-semibold mb-2">3D Understanding</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        3D QA and grounding with language-guided reasoning.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <p class="text-cyan-300 text-sm font-semibold mb-2">Text-to-3D</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Generate 3D assets from text prompts.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <p class="text-cyan-300 text-sm font-semibold mb-2">3D Editing</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Edit 3D objects with natural-language instructions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Image -->
+        <div class="fade-in relative">
+            <img src="statics/images/Pipeline.png" alt="Hunyuan3D-Buffalo 1.0 Pipeline"
+                class="w-full rounded-2xl shadow-xl object-cover transition-all duration-500">
+        </div>
+    </div>
+</section>
+
+
+
+<!-- 3D Editing Section -->
+<section id="editing" class="py-20 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Instruction-Guided 3D Editing</h2>
+            <p class="text-gray-400 max-w-3xl mx-auto text-lg">
+                Compare the source mesh and the edited mesh under user-specified editing instructions.
+            </p>
+        </div>
+
+        <!-- Case Selector -->
+        <div id="edit-case-list" class="flex flex-wrap justify-center gap-3 mb-8 fade-in">
+            <!-- Editing cases will be loaded here by JavaScript -->
+        </div>
+
+        <div id="edit-empty-state" class="hidden max-w-3xl mx-auto rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center text-gray-400">
+            No editing cases loaded. Please run <span class="text-gray-200 font-mono">build_edit_cases.py</span> first,
+            then refresh this page.
+        </div>
+
+        <div id="edit-viewer-panel" class="fade-in rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6">
+            <!-- Instruction -->
+            <div class="mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-semibold border border-cyan-400/20">
+                        Editing Instruction
+                    </span>
+                    <span id="edit-case-title" class="text-gray-400 text-sm"></span>
+                </div>
+                <textarea id="edit-instruction" rows="2"
+                    class="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-gray-200 text-sm md:text-base leading-relaxed outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30"
+                    placeholder="Fill in the editing instruction for this case, e.g., Replace the toy in the hand with a magic wand."></textarea>
+            </div>
+
+            <!-- Source vs Edited -->
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-5 items-stretch">
+                <!-- Source Mesh -->
+                <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-950/80">
+                    <div class="px-4 py-3 border-b border-white/10 flex justify-between items-center">
+                        <h3 class="text-white font-semibold">Source Mesh</h3>
+                        <span class="text-xs text-gray-500">Before Editing</span>
+                    </div>
+                    <model-viewer id="edit-source-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.8"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        touch-action="pan-y"
+                        style="width: 100%; height: 460px; background-color: transparent;">
+                    </model-viewer>
+
+                    <div class="px-4 pb-4">
+                        <button id="edit-source-detail-btn"
+                            class="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-sm font-medium border border-gray-700 btn-glow">
+                            View Detailed
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="hidden lg:flex items-center justify-center px-2">
+                    <div class="w-12 h-12 rounded-full border border-cyan-400/30 bg-cyan-500/10 flex items-center justify-center text-cyan-300">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Edited Mesh -->
+                <div class="rounded-2xl overflow-hidden border border-cyan-400/20 bg-gray-950/80">
+                    <div class="px-4 py-3 border-b border-white/10 flex justify-between items-center">
+                        <h3 class="text-white font-semibold">Edited Mesh</h3>
+                        <span class="text-xs text-cyan-300">After Editing</span>
+                    </div>
+                    <model-viewer id="edit-edited-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.8"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        touch-action="pan-y"
+                        style="width: 100%; height: 460px; background-color: transparent;">
+                    </model-viewer>
+
+                    <div class="px-4 pb-4">
+                        <button id="edit-edited-detail-btn"
+                            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium btn-glow">
+                            View Detailed
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-center items-center gap-4 mt-8">
+                <button id="edit-prev-case" class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium">
+                    <i class="fas fa-chevron-left mr-2"></i> Previous
+                </button>
+                <span id="edit-page-info" class="text-gray-400 text-sm">Case 1 of 1</span>
+                <button id="edit-next-case" class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium">
+                    Next <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- 3D Models Section -->
+<section id="models" class="py-20 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Generated 3D Assets</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+                Browse generated 3D assets by Hunyuan3D-Buffalo 1.0.
+            </p>
+        </div>
+
+        <div id="generated-empty-state" class="hidden max-w-3xl mx-auto rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center text-gray-400">
+            No generated 3D assets loaded. Please run <span class="text-gray-200 font-mono">build_gen_cases.py</span> first,
+            then refresh this page.
+        </div>
+
+        <!-- Model Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12" id="model-grid">
+            <!-- Generated models will be loaded here by JavaScript -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="generated-pagination" class="flex justify-center items-center gap-4 fade-in">
+            <button id="prev-page"
+                class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium disabled">
+                <i class="fas fa-chevron-left mr-2"></i> Previous
+            </button>
+            <span class="text-gray-400 text-sm" id="page-info">Page 1 of 1</span>
+            <button id="next-page"
+                class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium disabled">
+                Next <i class="fas fa-chevron-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Part-Level Exploded Section -->
+<section id="part-explode" class="py-20 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Part-Level Exploded View</h2>
+            <p class="text-gray-400 max-w-3xl mx-auto text-lg">
+                Visualize the whole mesh together with all part components, shown either combined or exploded.
+            </p>
+        </div>
+
+        <div id="seg-case-list" class="flex flex-wrap justify-center gap-3 mb-8 fade-in">
+            <!-- Segmentation cases will be loaded here by JavaScript -->
+        </div>
+
+        <div id="seg-empty-state" class="hidden max-w-3xl mx-auto rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center text-gray-400">
+            No part-level cases loaded. Please run <span class="text-gray-200 font-mono">build_seg_cases_v2_colored.py</span> first,
+            then refresh this page.
+        </div>
+
+        <div id="seg-viewer-panel" class="fade-in rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6">
+            <!-- Hidden segmentation metadata hooks. 
+                 Kept only for JavaScript compatibility; the visible header/tags are removed. -->
+            <div class="hidden">
+                <span id="seg-case-title"></span>
+                <p id="seg-case-meta"></p>
+                <div id="seg-part-tags"></div>
+            </div>
+
+            <!-- Instruction -->
+            <div class="mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-semibold border border-cyan-400/20">
+                        Part Instruction
+                    </span>
+                </div>
+                <textarea id="seg-instruction" rows="2"
+                    class="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-gray-200 text-sm md:text-base leading-relaxed outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30"
+                    placeholder="Fill in the part-level instruction for this case, e.g., Decompose the object into semantic parts."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-5 items-stretch">
+                <!-- Whole Mesh -->
+                <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-950/80">
+                    <div class="px-4 py-3 border-b border-white/10 flex justify-between items-center">
+                        <h3 class="text-white font-semibold">Whole Mesh</h3>
+                        <span class="text-xs text-gray-500">Original</span>
+                    </div>
+                    <model-viewer id="seg-whole-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.8"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        touch-action="pan-y"
+                        style="width: 100%; height: 460px; background-color: transparent;">
+                    </model-viewer>
+                </div>
+
+                <!-- Arrow -->
+                <div class="hidden lg:flex items-center justify-center px-2">
+                    <div class="w-12 h-12 rounded-full border border-cyan-400/30 bg-cyan-500/10 flex items-center justify-center text-cyan-300">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </div>
+                </div>
+
+                <!-- Part Components -->
+                <div class="rounded-2xl overflow-hidden border border-cyan-400/20 bg-gray-950/80">
+                    <div class="px-4 py-3 border-b border-white/10 flex flex-wrap justify-between items-center gap-3">
+                        <div>
+                            <h3 id="seg-parts-viewer-title" class="text-white font-semibold">Exploded Parts</h3>
+                            <span id="seg-parts-viewer-subtitle" class="text-xs text-cyan-300">Separated Components</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="seg-mode-btn px-3 py-1.5 rounded-full border border-gray-700 text-xs font-medium text-gray-300 transition hover:border-cyan-400 hover:text-cyan-300" data-mode="combined">
+                                Combined
+                            </button>
+                            <button class="seg-mode-btn active px-3 py-1.5 rounded-full border border-cyan-400/50 bg-cyan-500/10 text-xs font-medium text-cyan-300 transition" data-mode="exploded">
+                                Exploded
+                            </button>
+                        </div>
+                    </div>
+                    <model-viewer id="seg-exploded-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.8"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        touch-action="pan-y"
+                        style="width: 100%; height: 460px; background-color: transparent;">
+                    </model-viewer>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center gap-4 mt-8">
+                <button id="seg-prev-case" class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium">
+                    <i class="fas fa-chevron-left mr-2"></i> Previous
+                </button>
+                <span id="seg-page-info" class="text-gray-400 text-sm">Case 1 of 1</span>
+                <button id="seg-next-case" class="pagination-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium">
+                    Next <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal for detailed model view -->
+<div id="model-modal" class="modal">
+    <span id="gen-close-modal" class="close-modal">&times;</span>
+    <div class="modal-content p-6" style="width: 1000px; height: 750px;">
+        <div class="flex h-full gap-6">
+            <!-- Left Column (3/4 width) - Model Viewer and Controls -->
+            <div class="w-3/4 h-full flex flex-col gap-4">
+                <div class="model-viewport flex-grow">
+                    <model-viewer id="modal-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.0"
+                        exposure="0.5"
+                        environment-image="neutral"
+                        interaction-prompt="none"
+                        style="width: 100%; height: 100%; background-color: transparent;">
+                    </model-viewer>
+                </div>
+
+                <div class="view-mode-btn flex justify-center gap-2">
+                    <button class="view-mode active" data-mode="Legacy">Legacy</button>
+                    <button class="view-mode" data-mode="Normal">Normal</button>
+                    <button class="view-mode" data-mode="Gradient">Gradient</button>
+                    <button class="view-mode" data-mode="Neutral">Neutral</button>
+                </div>
+            </div>
+
+            <!-- Right Column (1/4 width) - Text Details -->
+            <div class="w-1/4 h-full flex flex-col gap-4">
+                <div class="model-details flex-grow overflow-y-auto">
+                    <h2 id="modal-title" class="text-2xl font-bold mb-3 text-white"></h2>
+                    <p id="modal-description"
+                        class="text-gray-300 mb-4 text-sm leading-relaxed rounded-xl border border-white/10 bg-black/30 p-3 whitespace-pre-line">
+                    </p>
+
+                    <div class="mb-4">
+                        <h3 class="text-md font-semibold text-white mb-2">Asset Info</h3>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <div>
+                                <p class="text-gray-400">File Name</p>
+                                <p id="modal-filename" class="text-white break-words"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for editing detailed model view -->
+<div id="edit-detail-modal" class="modal">
+    <span id="edit-close-detail-modal" class="close-modal">&times;</span>
+    <div class="modal-content p-6" style="width: 1000px; height: 750px;">
+        <div class="flex h-full gap-6">
+            <!-- Left Column - Model Viewer and Controls -->
+            <div class="w-3/4 h-full flex flex-col gap-4">
+                <div class="model-viewport flex-grow">
+                    <model-viewer id="edit-detail-viewer"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        style="width: 100%; height: 100%; background-color: transparent;">
+                    </model-viewer>
+                </div>
+
+                <div class="view-mode-btn flex justify-center gap-2">
+                    <button class="edit-view-mode active" data-mode="Legacy">Legacy</button>
+                    <button class="edit-view-mode" data-mode="Normal">Normal</button>
+                    <button class="edit-view-mode" data-mode="Gradient">Gradient</button>
+                    <button class="edit-view-mode" data-mode="Neutral">Neutral</button>
+                </div>
+            </div>
+
+            <!-- Right Column - Editing Details -->
+            <div class="w-1/4 h-full flex flex-col gap-4">
+                <div class="model-details flex-grow overflow-y-auto">
+                    <h2 id="edit-detail-title" class="text-2xl font-bold mb-3 text-white">Editing Detail</h2>
+                    <p id="edit-detail-subtitle" class="text-gray-400 mb-4 text-sm"></p>
+
+                    <div class="mb-4">
+                        <h3 class="text-md font-semibold text-white mb-2">Editing Instruction</h3>
+                        <p id="edit-detail-instruction"
+                            class="text-gray-300 text-sm leading-relaxed rounded-xl border border-white/10 bg-black/30 p-3">
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="statics/js/edit_cases.js"></script>
+<script src="statics/js/seg_cases.js"></script>
+<script src="statics/js/gen_cases.js"></script>
+
+<script>
+    const images = [
+        "statics/images/Teaser.png",
+        "statics/images/Edit_Teaser.png",
+        "statics/images/PartGen_Teaser.png",
+        "statics/images/Text23D_Teaser.png",
+        "statics/images/Understand_Teaser.png",
+    ];
+
+    let current = 0;
+    const imgElement = document.getElementById("showcase-image");
+    const dots = document.querySelectorAll(".dot");
+
+    function updateShowcase() {
+        imgElement.src = images[current];
+        dots.forEach((d, i) => {
+            d.classList.toggle("bg-gray-500", i === current);
+            d.classList.toggle("bg-gray-700", i !== current);
+        });
+    }
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
+        current = (current - 1 + images.length) % images.length;
+        updateShowcase();
+    });
+
+    document.getElementById("next-btn").addEventListener("click", () => {
+        current = (current + 1) % images.length;
+        updateShowcase();
+    });
+</script>
+
+
+<script>
+    const segCases = [...(window.SEG_CASES || [])].sort((a, b) => {
+        const getOrder = (item) => {
+            const value = Number(item.order);
+            return Number.isFinite(value) ? value : Number.MAX_SAFE_INTEGER;
+        };
+        const orderA = getOrder(a);
+        const orderB = getOrder(b);
+        if (orderA !== orderB) return orderA - orderB;
+
+        const normalize = (item) => {
+            const text = String(item.title || item.wholeFileName || "");
+            return text.replace(/\d+/g, (num) => num.padStart(10, "0")).toLowerCase();
+        };
+        return normalize(a).localeCompare(normalize(b));
+    });
+
+    let currentSegCase = 0;
+
+    const segCaseList = document.getElementById("seg-case-list");
+    const segEmptyState = document.getElementById("seg-empty-state");
+    const segViewerPanel = document.getElementById("seg-viewer-panel");
+    const segWholeViewer = document.getElementById("seg-whole-viewer");
+    const segExplodedViewer = document.getElementById("seg-exploded-viewer");
+    const segCaseTitle = document.getElementById("seg-case-title");
+    const segCaseMeta = document.getElementById("seg-case-meta");
+    const segInstruction = document.getElementById("seg-instruction");
+    const segPartTags = document.getElementById("seg-part-tags");
+    const segPageInfo = document.getElementById("seg-page-info");
+    const segPrevCase = document.getElementById("seg-prev-case");
+    const segNextCase = document.getElementById("seg-next-case");
+    const segModeButtons = document.querySelectorAll(".seg-mode-btn");
+    const segPartsViewerTitle = document.getElementById("seg-parts-viewer-title");
+    const segPartsViewerSubtitle = document.getElementById("seg-parts-viewer-subtitle");
+    let currentSegPartMode = "exploded";
+
+    function applySegWholeMaterial(viewer) {
+        const applyMaterial = () => {
+            try {
+                if (!viewer.model || !viewer.model.materials) return;
+
+                viewer.model.materials.forEach((material) => {
+                    if (!material.pbrMetallicRoughness) return;
+
+                    const color = [53, 54, 56, 255].map((x) => x / 255);
+                    material.pbrMetallicRoughness.baseColorTexture = null;
+                    material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                    material.pbrMetallicRoughness.setRoughnessFactor(0.7);
+                    material.pbrMetallicRoughness.setBaseColorFactor(color);
+                });
+
+                viewer.setAttribute("shadow-intensity", "0.8");
+                viewer.setAttribute("exposure", "1.0");
+                viewer.setAttribute("environment-image", "legacy");
+            } catch (error) {
+                console.error("Error applying whole-mesh material:", error);
+            }
+        };
+
+        viewer.addEventListener("load", applyMaterial);
+    }
+
+    function applySegPartColorMaterial(viewer) {
+        const palette = [
+            [0.95, 0.38, 0.35, 1.0],  // red
+            [0.35, 0.70, 0.95, 1.0],  // blue
+            [0.98, 0.78, 0.32, 1.0],  // yellow
+            [0.55, 0.85, 0.45, 1.0],  // green
+            [0.70, 0.55, 0.95, 1.0],  // purple
+            [0.40, 0.90, 0.85, 1.0],  // cyan
+            [0.95, 0.55, 0.85, 1.0],  // pink
+            [0.80, 0.75, 0.62, 1.0],  // beige
+            [0.55, 0.62, 0.75, 1.0],  // slate
+            [0.95, 0.62, 0.35, 1.0]   // orange
+        ];
+
+        const applyMaterial = () => {
+            try {
+                if (!viewer.model || !viewer.model.materials) return;
+
+                viewer.model.materials.forEach((material, index) => {
+                    if (!material.pbrMetallicRoughness) return;
+
+                    const color = palette[index % palette.length];
+                    material.pbrMetallicRoughness.baseColorTexture = null;
+                    material.pbrMetallicRoughness.setMetallicFactor(0.05);
+                    material.pbrMetallicRoughness.setRoughnessFactor(0.65);
+                    material.pbrMetallicRoughness.setBaseColorFactor(color);
+                });
+
+                viewer.setAttribute("shadow-intensity", "0.8");
+                viewer.setAttribute("exposure", "1.0");
+                viewer.setAttribute("environment-image", "legacy");
+            } catch (error) {
+                console.error("Error applying part-color material:", error);
+            }
+        };
+
+        viewer.addEventListener("load", applyMaterial);
+    }
+
+    applySegWholeMaterial(segWholeViewer);
+    applySegPartColorMaterial(segExplodedViewer);
+
+    function renderSegCaseButtons() {
+        segCaseList.innerHTML = "";
+        segCases.forEach((item, index) => {
+            const button = document.createElement("button");
+            button.className = "seg-case-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium transition hover:border-cyan-400 hover:text-cyan-300";
+            button.textContent = item.title || `Case ${index + 1}`;
+            button.addEventListener("click", () => {
+                currentSegCase = index;
+                updateSegCase();
+            });
+            segCaseList.appendChild(button);
+        });
+    }
+
+    function updateSegPartTags(item) {
+        segPartTags.innerHTML = "";
+        const partNames = item.partNames || [];
+        const partCount = item.partCount || (item.parts ? item.parts.length : 0);
+        const shown = Math.min(partCount, 12);
+        for (let i = 0; i < shown; i += 1) {
+            const tag = document.createElement("span");
+            tag.className = "inline-flex items-center px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-gray-400 text-xs";
+            tag.textContent = partNames[i] ? partNames[i] : `Part ${i + 1}`;
+            segPartTags.appendChild(tag);
+        }
+        if (partCount > shown) {
+            const more = document.createElement("span");
+            more.className = "inline-flex items-center px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/20 text-cyan-300 text-xs";
+            more.textContent = `+${partCount - shown} more`;
+            segPartTags.appendChild(more);
+        }
+    }
+
+    function updateSegModeButtons() {
+        segModeButtons.forEach((button) => {
+            const active = button.dataset.mode === currentSegPartMode;
+            button.classList.toggle("active", active);
+            button.classList.toggle("bg-cyan-500/10", active);
+            button.classList.toggle("border-cyan-400/50", active);
+            button.classList.toggle("text-cyan-300", active);
+            button.classList.toggle("border-gray-700", !active);
+            button.classList.toggle("text-gray-300", !active);
+        });
+
+        if (currentSegPartMode === "combined") {
+            segPartsViewerTitle.textContent = "Combined Parts";
+            segPartsViewerSubtitle.textContent = "All Part Components";
+        } else {
+            segPartsViewerTitle.textContent = "Exploded Parts";
+            segPartsViewerSubtitle.textContent = "Separated Components";
+        }
+    }
+
+    function getSegPartViewerSrc(item) {
+        if (currentSegPartMode === "combined") {
+            return item.combined || item.exploded || item.whole;
+        }
+        return item.exploded || item.combined || item.whole;
+    }
+
+    function updateSegPartViewerOnly() {
+        if (!segCases.length) return;
+        const item = segCases[currentSegCase];
+        segExplodedViewer.src = getSegPartViewerSrc(item);
+        updateSegModeButtons();
+    }
+
+    function updateSegCase() {
+        if (!segCases.length) {
+            segEmptyState.classList.remove("hidden");
+            segViewerPanel.classList.add("hidden");
+            return;
+        }
+
+        segEmptyState.classList.add("hidden");
+        segViewerPanel.classList.remove("hidden");
+
+        const item = segCases[currentSegCase];
+        segWholeViewer.src = item.whole;
+        segExplodedViewer.src = getSegPartViewerSrc(item);
+        updateSegModeButtons();
+
+        const partCount = item.partCount || (item.parts ? item.parts.length : 0);
+        segCaseTitle.textContent = item.title || `Case ${currentSegCase + 1}`;
+        segCaseMeta.textContent = `${partCount} parts · Whole mesh: ${item.wholeFileName || "whole.glb"}`;
+        segInstruction.value = item.instruction || item.prompt || item.description || "";
+        segPageInfo.textContent = `Case ${currentSegCase + 1} of ${segCases.length}`;
+        updateSegPartTags(item);
+
+        document.querySelectorAll(".seg-case-btn").forEach((button, index) => {
+            button.classList.toggle("active", index === currentSegCase);
+            button.classList.toggle("bg-cyan-500/10", index === currentSegCase);
+            button.classList.toggle("border-cyan-400/50", index === currentSegCase);
+            button.classList.toggle("text-cyan-300", index === currentSegCase);
+            button.classList.toggle("text-gray-300", index !== currentSegCase);
+        });
+    }
+
+    segModeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            currentSegPartMode = button.dataset.mode || "exploded";
+            updateSegPartViewerOnly();
+        });
+    });
+
+    segPrevCase.addEventListener("click", () => {
+        if (!segCases.length) return;
+        currentSegCase = (currentSegCase - 1 + segCases.length) % segCases.length;
+        updateSegCase();
+    });
+
+    segNextCase.addEventListener("click", () => {
+        if (!segCases.length) return;
+        currentSegCase = (currentSegCase + 1) % segCases.length;
+        updateSegCase();
+    });
+
+    renderSegCaseButtons();
+    updateSegCase();
+</script>
+
+
+<script>
+    const genCases = [...(window.GEN_CASES || [])].sort((a, b) => {
+        const getOrder = (item) => {
+            const value = Number(item.order);
+            return Number.isFinite(value) ? value : Number.MAX_SAFE_INTEGER;
+        };
+
+        const orderA = getOrder(a);
+        const orderB = getOrder(b);
+
+        if (orderA !== orderB) {
+            return orderA - orderB;
+        }
+
+        const normalize = (item) => {
+            const text = String(item.title || item.fileName || "");
+            return text.replace(/\d+/g, (num) => num.padStart(10, "0")).toLowerCase();
+        };
+
+        return normalize(a).localeCompare(normalize(b));
+    });
+
+    let currentGenPage = 1;
+    const genModelsPerPage = 8;
+    let currentGenDetailMode = "Legacy";
+
+    const modelGrid = document.getElementById("model-grid");
+    const generatedEmptyState = document.getElementById("generated-empty-state");
+    const generatedPagination = document.getElementById("generated-pagination");
+    const prevPageBtn = document.getElementById("prev-page");
+    const nextPageBtn = document.getElementById("next-page");
+    const pageInfo = document.getElementById("page-info");
+
+    const genModal = document.getElementById("model-modal");
+    const genCloseModal = document.getElementById("gen-close-modal");
+    const modalViewer = document.getElementById("modal-viewer");
+    const modalTitle = document.getElementById("modal-title");
+    const modalDescription = document.getElementById("modal-description");
+    const modalFilename = document.getElementById("modal-filename");
+    const viewModeButtons = document.querySelectorAll(".view-mode");
+
+    function escapeHtml(text) {
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function getGeneratedTitle(item, index) {
+        return item.title || item.fileName || `Generated Asset ${index + 1}`;
+    }
+
+    function getGeneratedDescription(item) {
+        return item.description || item.text || "No description provided.";
+    }
+
+    function applyGeneratedCardMaterial(viewer) {
+        const applyMaterial = () => {
+            try {
+                if (!viewer.model || !viewer.model.materials) return;
+
+                viewer.model.materials.forEach((material) => {
+                    if (!material.pbrMetallicRoughness) return;
+
+                    const color = [53, 54, 56, 255].map((x) => x / 255);
+                    material.pbrMetallicRoughness.baseColorTexture = null;
+                    material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                    material.pbrMetallicRoughness.setRoughnessFactor(0.7);
+                    material.pbrMetallicRoughness.setBaseColorFactor(color);
+                });
+
+                viewer.setAttribute("shadow-intensity", "0.8");
+                viewer.setAttribute("exposure", "1.0");
+                viewer.setAttribute("environment-image", "legacy");
+            } catch (error) {
+                console.error("Error applying generated-card material:", error);
+            }
+        };
+
+        viewer.addEventListener("load", applyMaterial);
+    }
+
+    function renderGeneratedModels() {
+        if (!genCases.length) {
+            modelGrid.innerHTML = "";
+            generatedEmptyState.classList.remove("hidden");
+            generatedPagination.classList.add("hidden");
+            return;
+        }
+
+        generatedEmptyState.classList.add("hidden");
+        generatedPagination.classList.remove("hidden");
+
+        const totalPages = Math.max(1, Math.ceil(genCases.length / genModelsPerPage));
+        currentGenPage = Math.min(Math.max(currentGenPage, 1), totalPages);
+
+        const startIndex = (currentGenPage - 1) * genModelsPerPage;
+        const paginatedModels = genCases.slice(startIndex, startIndex + genModelsPerPage);
+
+        modelGrid.innerHTML = "";
+
+        paginatedModels.forEach((item, localIndex) => {
+            const globalIndex = startIndex + localIndex;
+            const title = getGeneratedTitle(item, globalIndex);
+            const description = getGeneratedDescription(item);
+            const modelSrc = item.model || item.src;
+            const modelViewerId = `generated-model-${globalIndex}`;
+
+            const modelCard = document.createElement("div");
+            modelCard.className = "model-card rounded-xl p-6 fade-in flex flex-col";
+            modelCard.innerHTML = `
+                <div class="model-viewport h-72 rounded-xl overflow-hidden mb-6">
+                    <model-viewer id="${modelViewerId}"
+                        src="${escapeHtml(modelSrc)}"
+                        camera-controls
+                        auto-rotate
+                        shadow-intensity="0.8"
+                        exposure="1.0"
+                        environment-image="legacy"
+                        interaction-prompt="none"
+                        touch-action="pan-y"
+                        style="width: 100%; height: 100%; background-color: transparent;">
+                    </model-viewer>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white leading-snug">${escapeHtml(title)}</h3>
+                <p class="text-gray-400 mb-5 text-sm leading-relaxed max-h-24 overflow-hidden flex-grow whitespace-pre-line">${escapeHtml(description)}</p>
+                <button class="view-details-btn text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center text-sm mt-auto" data-index="${globalIndex}">
+                    View details <i class="fas fa-expand ml-2"></i>
+                </button>
+            `;
+
+            modelGrid.appendChild(modelCard);
+
+            const viewer = modelCard.querySelector(`#${modelViewerId}`);
+            applyGeneratedCardMaterial(viewer);
+
+            const viewDetailsBtn = modelCard.querySelector(".view-details-btn");
+            viewDetailsBtn.addEventListener("click", () => openGeneratedModal(globalIndex));
+        });
+
+        updateGeneratedPagination();
+    }
+
+    function updateGeneratedPagination() {
+        const totalPages = Math.max(1, Math.ceil(genCases.length / genModelsPerPage));
+        pageInfo.textContent = `Page ${currentGenPage} of ${totalPages}`;
+        prevPageBtn.classList.toggle("disabled", currentGenPage === 1);
+        nextPageBtn.classList.toggle("disabled", currentGenPage === totalPages);
+    }
+
+    function setGeneratedModeButtonActive(mode) {
+        viewModeButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+    }
+
+    function applyGeneratedDetailViewMode(mode) {
+        if (!modalViewer || !modalViewer.model) return;
+
+        const materials = modalViewer.model.materials || [];
+        const [material] = materials;
+        if (!material || !material.pbrMetallicRoughness) return;
+
+        switch (mode) {
+            case "Legacy": {
+                const color = [100, 100, 100, 255].map((x) => x / 255);
+                material.pbrMetallicRoughness.baseColorTexture = null;
+                material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.5);
+                material.pbrMetallicRoughness.setBaseColorFactor(color);
+                modalViewer.setAttribute("exposure", "1.0");
+                modalViewer.setAttribute("environment-image", "legacy");
+                modalViewer.setAttribute("shadow-intensity", "0");
+                break;
+            }
+
+            case "Normal": {
+                modalViewer.setAttribute("environment-image", "neutral");
+                modalViewer.setAttribute("shadow-intensity", "0.5");
+                modalViewer.setAttribute("exposure", "0.8");
+                break;
+            }
+
+            case "Gradient": {
+                materials.forEach((mat) => {
+                    if (mat.pbrMetallicRoughness) {
+                        mat.pbrMetallicRoughness.baseColorTexture = null;
+                        mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+                    }
+                });
+                modalViewer.setAttribute("environment-image", "statics/env_maps/gradient.jpg");
+                modalViewer.setAttribute("shadow-intensity", "0.0");
+                modalViewer.setAttribute("exposure", "1.5");
+                break;
+            }
+
+            case "Neutral": {
+                const color = [100, 100, 100, 255].map((x) => x / 255);
+                material.pbrMetallicRoughness.baseColorTexture = null;
+                material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.5);
+                material.pbrMetallicRoughness.setBaseColorFactor(color);
+                modalViewer.setAttribute("environment-image", "neutral");
+                modalViewer.setAttribute("exposure", "1.0");
+                modalViewer.setAttribute("shadow-intensity", "0");
+                break;
+            }
+        }
+    }
+
+    function openGeneratedModal(index) {
+        const item = genCases[index];
+        if (!item) return;
+
+        const title = getGeneratedTitle(item, index);
+        const description = getGeneratedDescription(item);
+        const modelSrc = item.model || item.src;
+
+        modalTitle.textContent = title;
+        modalDescription.textContent = description;
+        modalFilename.textContent = item.fileName || `${title}.glb`;
+
+        currentGenDetailMode = "Legacy";
+        setGeneratedModeButtonActive(currentGenDetailMode);
+
+        modalViewer.setAttribute("src", modelSrc);
+        genModal.style.display = "block";
+
+        const applyAfterLoad = () => {
+            applyGeneratedDetailViewMode(currentGenDetailMode);
+            modalViewer.removeEventListener("load", applyAfterLoad);
+        };
+
+        modalViewer.addEventListener("load", applyAfterLoad);
+        setTimeout(() => applyGeneratedDetailViewMode(currentGenDetailMode), 200);
+    }
+
+    prevPageBtn.addEventListener("click", () => {
+        if (currentGenPage <= 1) return;
+        currentGenPage -= 1;
+        renderGeneratedModels();
+    });
+
+    nextPageBtn.addEventListener("click", () => {
+        const totalPages = Math.max(1, Math.ceil(genCases.length / genModelsPerPage));
+        if (currentGenPage >= totalPages) return;
+        currentGenPage += 1;
+        renderGeneratedModels();
+    });
+
+    genCloseModal.addEventListener("click", () => {
+        genModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === genModal) {
+            genModal.style.display = "none";
+        }
+    });
+
+    viewModeButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            currentGenDetailMode = this.dataset.mode;
+            setGeneratedModeButtonActive(currentGenDetailMode);
+            applyGeneratedDetailViewMode(currentGenDetailMode);
+        });
+    });
+
+    renderGeneratedModels();
+</script>
+
+<script>
+    const editCases = [...(window.EDIT_CASES || [])].sort((a, b) => {
+        const getNumber = (x) => {
+            const text = String(x.title || "");
+            const match = text.match(/\d+/);
+            return match ? parseInt(match[0], 10) : Number.MAX_SAFE_INTEGER;
+        };
+        return getNumber(a) - getNumber(b);
+    });
+    let currentEditCase = 0;
+
+    const editCaseList = document.getElementById("edit-case-list");
+    const editEmptyState = document.getElementById("edit-empty-state");
+    const editViewerPanel = document.getElementById("edit-viewer-panel");
+    const editSourceViewer = document.getElementById("edit-source-viewer");
+    const editEditedViewer = document.getElementById("edit-edited-viewer");
+
+    function applyGeneratedCardMaterial(viewer) {
+        const applyMaterial = () => {
+            try {
+                if (!viewer.model || !viewer.model.materials) return;
+
+                viewer.model.materials.forEach((material) => {
+                    if (!material.pbrMetallicRoughness) return;
+
+                    // Same clay-like material style as the Generated 3D Assets cards.
+                    const color = [53, 54, 56, 255].map((x) => x / 255);
+                    material.pbrMetallicRoughness.baseColorTexture = null;
+                    material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                    material.pbrMetallicRoughness.setRoughnessFactor(0.7);
+                    material.pbrMetallicRoughness.setBaseColorFactor(color);
+                });
+
+                viewer.setAttribute("shadow-intensity", "0.8");
+                viewer.setAttribute("exposure", "1.0");
+                viewer.setAttribute("environment-image", "legacy");
+            } catch (error) {
+                console.error("Error applying editing-card material:", error);
+            }
+        };
+
+        viewer.addEventListener("load", applyMaterial);
+    }
+
+    applyGeneratedCardMaterial(editSourceViewer);
+    applyGeneratedCardMaterial(editEditedViewer);
+
+    const editInstruction = document.getElementById("edit-instruction");
+    const editCaseTitle = document.getElementById("edit-case-title");
+    const editPageInfo = document.getElementById("edit-page-info");
+    const editPrevCase = document.getElementById("edit-prev-case");
+    const editNextCase = document.getElementById("edit-next-case");
+    const editSourceDetailBtn = document.getElementById("edit-source-detail-btn");
+    const editEditedDetailBtn = document.getElementById("edit-edited-detail-btn");
+    const editDetailModal = document.getElementById("edit-detail-modal");
+    const editCloseDetailModal = document.getElementById("edit-close-detail-modal");
+    const editDetailViewer = document.getElementById("edit-detail-viewer");
+    const editDetailTitle = document.getElementById("edit-detail-title");
+    const editDetailSubtitle = document.getElementById("edit-detail-subtitle");
+    const editDetailInstruction = document.getElementById("edit-detail-instruction");
+    const editViewModeButtons = document.querySelectorAll(".edit-view-mode");
+    let currentEditDetailMode = "Legacy";
+
+    function renderEditCaseButtons() {
+        editCaseList.innerHTML = "";
+        editCases.forEach((item, index) => {
+            const button = document.createElement("button");
+            button.className = "edit-case-btn px-4 py-2 rounded-full border border-gray-700 text-sm font-medium transition hover:border-cyan-400 hover:text-cyan-300";
+            button.textContent = item.title || `Case ${index + 1}`;
+            button.addEventListener("click", () => {
+                currentEditCase = index;
+                updateEditCase();
+            });
+            editCaseList.appendChild(button);
+        });
+    }
+
+    function updateEditCase() {
+        if (!editCases.length) {
+            editEmptyState.classList.remove("hidden");
+            editViewerPanel.classList.add("hidden");
+            return;
+        }
+
+        editEmptyState.classList.add("hidden");
+        editViewerPanel.classList.remove("hidden");
+
+        const item = editCases[currentEditCase];
+        editSourceViewer.src = item.source;
+        editEditedViewer.src = item.edited;
+        editInstruction.value = item.instruction || "";
+        editCaseTitle.textContent = item.title || `Case ${currentEditCase + 1}`;
+        editPageInfo.textContent = `Case ${currentEditCase + 1} of ${editCases.length}`;
+
+        document.querySelectorAll(".edit-case-btn").forEach((button, index) => {
+            button.classList.toggle("active", index === currentEditCase);
+            button.classList.toggle("bg-cyan-500/10", index === currentEditCase);
+            button.classList.toggle("border-cyan-400/50", index === currentEditCase);
+            button.classList.toggle("text-cyan-300", index === currentEditCase);
+            button.classList.toggle("text-gray-300", index !== currentEditCase);
+        });
+    }
+
+    function setEditModeButtonActive(mode) {
+        editViewModeButtons.forEach((btn) => {
+            const active = btn.dataset.mode === mode;
+            btn.classList.toggle("active", active);
+        });
+    }
+
+    function applyEditDetailViewMode(mode) {
+        if (!editDetailViewer || !editDetailViewer.model) return;
+
+        const materials = editDetailViewer.model.materials || [];
+        const [material] = materials;
+        if (!material || !material.pbrMetallicRoughness) return;
+
+        switch (mode) {
+            case "Legacy": {
+                const color = [100, 100, 100, 255].map((x) => x / 255);
+                material.pbrMetallicRoughness.baseColorTexture = null;
+                material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.5);
+                material.pbrMetallicRoughness.setBaseColorFactor(color);
+                editDetailViewer.setAttribute("exposure", "1.0");
+                editDetailViewer.setAttribute("environment-image", "legacy");
+                editDetailViewer.setAttribute("shadow-intensity", "0");
+                break;
+            }
+
+            case "Normal": {
+                editDetailViewer.setAttribute("environment-image", "neutral");
+                editDetailViewer.setAttribute("shadow-intensity", "0.5");
+                editDetailViewer.setAttribute("exposure", "0.8");
+                break;
+            }
+
+            case "Gradient": {
+                materials.forEach((mat) => {
+                    if (mat.pbrMetallicRoughness) {
+                        mat.pbrMetallicRoughness.baseColorTexture = null;
+                        mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+                    }
+                });
+                editDetailViewer.setAttribute("environment-image", "statics/env_maps/gradient.jpg");
+                editDetailViewer.setAttribute("shadow-intensity", "0.0");
+                editDetailViewer.setAttribute("exposure", "1.5");
+                break;
+            }
+
+            case "Neutral": {
+                const color = [100, 100, 100, 255].map((x) => x / 255);
+                material.pbrMetallicRoughness.baseColorTexture = null;
+                material.pbrMetallicRoughness.setMetallicFactor(0.1);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.5);
+                material.pbrMetallicRoughness.setBaseColorFactor(color);
+                editDetailViewer.setAttribute("environment-image", "neutral");
+                editDetailViewer.setAttribute("exposure", "1.0");
+                editDetailViewer.setAttribute("shadow-intensity", "0");
+                break;
+            }
+        }
+    }
+
+    function openEditDetailModal(meshType) {
+        if (!editCases.length) return;
+
+        const item = editCases[currentEditCase];
+        const isSource = meshType === "source";
+        const meshSrc = isSource ? item.source : item.edited;
+
+        editDetailTitle.textContent = isSource ? "Source Mesh" : "Edited Mesh";
+        editDetailSubtitle.textContent = item.title || `Case ${currentEditCase + 1}`;
+        editDetailInstruction.textContent = editInstruction.value || item.instruction || "No instruction filled yet.";
+
+        currentEditDetailMode = "Legacy";
+        setEditModeButtonActive(currentEditDetailMode);
+
+        editDetailViewer.setAttribute("src", meshSrc);
+        editDetailModal.style.display = "block";
+
+        const applyAfterLoad = () => {
+            applyEditDetailViewMode(currentEditDetailMode);
+            editDetailViewer.removeEventListener("load", applyAfterLoad);
+        };
+
+        editDetailViewer.addEventListener("load", applyAfterLoad);
+        setTimeout(() => applyEditDetailViewMode(currentEditDetailMode), 200);
+    }
+
+    editViewModeButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            currentEditDetailMode = this.dataset.mode;
+            setEditModeButtonActive(currentEditDetailMode);
+            applyEditDetailViewMode(currentEditDetailMode);
+        });
+    });
+
+    editSourceDetailBtn.addEventListener("click", () => openEditDetailModal("source"));
+    editEditedDetailBtn.addEventListener("click", () => openEditDetailModal("edited"));
+
+    editCloseDetailModal.addEventListener("click", () => {
+        editDetailModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === editDetailModal) {
+            editDetailModal.style.display = "none";
+        }
+    });
+
+    editPrevCase.addEventListener("click", () => {
+        if (!editCases.length) return;
+        currentEditCase = (currentEditCase - 1 + editCases.length) % editCases.length;
+        updateEditCase();
+    });
+
+    editNextCase.addEventListener("click", () => {
+        if (!editCases.length) return;
+        currentEditCase = (currentEditCase + 1) % editCases.length;
+        updateEditCase();
+    });
+
+    renderEditCaseButtons();
+    updateEditCase();
+</script>
+
+</body>
+
+</html>
+
