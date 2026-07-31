@@ -526,19 +526,21 @@
 
             <p class="text-gray-400 text-lg leading-relaxed">
                 Hunyuan3D-Buffalo 1.0 is a unified 3D multimodal framework for
-                3D understanding, text-to-3D generation, and instruction-guided 3D editing.
+                3D understanding, text-to-3D generation, instruction-guided 3D editing,
+                and part-level 3D generation.
                 It supports diverse tasks within a single pipeline by connecting language,
                 3D representations, and generative 3D modules.
             </p>
 
             <p class="text-gray-400 text-lg leading-relaxed">
                 The framework uses a shared Hunyuan3D-VLM backbone to bridge 3D QA,
-                grounding, generation, and editing. Based on this unified representation,
-                Hunyuan3D DiT modules further enable scalable multimodal generation and
-                high-quality 3D editing.
+                grounding, generation, editing, and part-level decomposition. Based on
+                this unified representation, Hunyuan3D DiT modules further enable
+                scalable multimodal generation, high-quality 3D editing, and
+                language-guided part segmentation with per-part mesh reconstruction.
             </p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
                 <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                     <p class="text-cyan-300 text-sm font-semibold mb-2">3D Understanding</p>
                     <p class="text-gray-500 text-sm leading-relaxed">
@@ -557,6 +559,13 @@
                     <p class="text-cyan-300 text-sm font-semibold mb-2">3D Editing</p>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Edit 3D objects with natural-language instructions.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <p class="text-cyan-300 text-sm font-semibold mb-2">Part Generation</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Decompose 3D objects into semantic parts via language-guided segmentation.
                     </p>
                 </div>
             </div>
