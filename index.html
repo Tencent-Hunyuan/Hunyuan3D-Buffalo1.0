@@ -620,6 +620,15 @@
     </div>
 </section>
 
+<!-- Intro Video -->
+<section id="intro-video" class="py-16 bg-black px-6">
+    <div class="max-w-6xl mx-auto fade-in">
+        <video id="intro-video-player" class="w-full rounded-2xl" muted loop playsinline preload="metadata">
+            <source src="intro.mp4" type="video/mp4">
+        </video>
+    </div>
+</section>
+
 <!-- Image Showcase -->
 <section id="showcase" class="py-20 bg-black px-6">
     <div class="max-w-6xl mx-auto text-center">
@@ -1978,9 +1987,27 @@
 <script>
     (function () {
         var wm = document.getElementById("buffalo-watermark");
+        var video = document.getElementById("intro-video-player");
+        var videoSection = document.getElementById("intro-video");
         var full = 0.28, dimmed = 0.07;
+
+        function isInViewport(el) {
+            var r = el.getBoundingClientRect();
+            var visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+            return visible > r.height * 0.3;
+        }
+
         window.addEventListener("scroll", function () {
-            wm.style.opacity = window.scrollY > window.innerHeight ? dimmed : full;
+            var pastFirst = window.scrollY > window.innerHeight;
+            var videoVisible = isInViewport(videoSection);
+
+            wm.style.opacity = pastFirst ? dimmed : full;
+
+            if (videoVisible) {
+                if (video.paused) video.play();
+            } else {
+                if (!video.paused) video.pause();
+            }
         }, { passive: true });
     })();
 </script>
