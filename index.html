@@ -538,6 +538,145 @@
         box-shadow: 0 0 30px rgba(0, 231, 255, 0.1);
         border-color: rgba(0, 231, 255, 0.3);
     }
+
+    /* Left navigation rail */
+    #left-rail {
+        position: fixed;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 50;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(17, 17, 19, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 1280px) {
+        #left-rail {
+            display: flex;
+        }
+    }
+
+    .rail-logo,
+    .rail-link,
+    .rail-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        transition: all 0.25s ease;
+    }
+
+    .rail-logo {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .rail-logo:hover {
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+    .rail-link {
+        margin: 0.2rem 0;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.4);
+        border-radius: 9999px;
+        text-decoration: none;
+    }
+
+    .rail-link:hover {
+        color: var(--primary);
+        background: rgba(0, 231, 255, 0.08);
+    }
+
+    .rail-link.active {
+        color: var(--primary);
+        background: rgba(0, 231, 255, 0.12);
+        box-shadow: 0 0 14px rgba(0, 231, 255, 0.18);
+    }
+
+    .rail-icon {
+        margin: 0.2rem 0;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.45);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .rail-icon:hover {
+        color: var(--primary);
+        background: rgba(0, 231, 255, 0.08);
+    }
+
+    .rail-divider {
+        width: 1px;
+        height: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 0.5rem 0;
+    }
+
+    /* Citation section */
+    .citation-card {
+        background: rgba(20, 20, 22, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: border-color 0.3s ease;
+    }
+
+    .citation-card:hover {
+        border-color: rgba(0, 231, 255, 0.2);
+    }
+
+    .citation-card pre {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 0.75rem;
+        padding: 1.25rem 1.5rem;
+        overflow-x: auto;
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: #c0c0c0;
+        font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+    }
+
+    .citation-copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        color: #a0a0a0;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .citation-copy-btn:hover {
+        border-color: rgba(0, 231, 255, 0.4);
+        color: var(--primary);
+        background: rgba(0, 231, 255, 0.06);
+    }
+
+    .citation-copy-btn.copied {
+        border-color: rgba(0, 231, 255, 0.5);
+        color: var(--primary);
+        background: rgba(0, 231, 255, 0.1);
+    }
 </style>
 
 </head>
@@ -545,6 +684,26 @@
 <body>
     <!-- Fixed decorative buffalo watermark -->
     <img id="buffalo-watermark" src="buffalo.png" alt="" class="fixed bottom-0 right-0 w-[30vw] md:w-[480px] lg:w-[560px] max-w-[33%] md:max-w-none opacity-[0.28] pointer-events-none select-none translate-x-[10%] translate-y-[10%] z-[1]" style="transition: opacity 0.4s ease;" aria-hidden="true">
+
+    <!-- Left navigation rail -->
+    <nav id="left-rail" aria-label="Section navigation">
+        <a href="#overview" class="rail-logo" aria-label="Back to top">
+            <i class="fa-solid fa-cube"></i>
+        </a>
+        <div class="rail-divider"></div>
+        <a href="#showcase" class="rail-link active" data-target="showcase">01</a>
+        <a href="#pipeline" class="rail-link" data-target="pipeline">02</a>
+        <a href="#editing" class="rail-link" data-target="editing">03</a>
+        <a href="#models" class="rail-link" data-target="models">04</a>
+        <a href="#part-explode" class="rail-link" data-target="part-explode">05</a>
+        <div class="rail-divider"></div>
+        <a href="#citation" class="rail-icon" aria-label="Citation">
+            <i class="fa-regular fa-file-lines"></i>
+        </a>
+        <button id="rail-top-btn" class="rail-icon" aria-label="Back to top">
+            <i class="fa-regular fa-sun"></i>
+        </button>
+    </nav>
 
     <!-- Hero Section -->
     <section id="overview" class="dark-gradient pt-24 pb-16 px-6">
@@ -1011,6 +1170,45 @@
                     Next <i class="fas fa-chevron-right ml-2"></i>
                 </button>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Citation Section -->
+<section id="citation" class="py-20 bg-black px-6">
+    <div class="max-w-4xl mx-auto fade-in">
+        <h2 class="text-3xl md:text-4xl font-bold mb-10 text-white">Citation</h2>
+
+        <div class="citation-card p-6 md:p-8">
+            <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mb-6 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">Year</span>
+                    <span class="text-gray-200 font-medium">2026</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">arXiv</span>
+                    <a href="https://arxiv.org/abs/2608.02711" target="_blank" rel="noopener"
+                        class="text-cyan-300 font-medium hover:text-cyan-200 transition-colors">2608.02711</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">Entry type</span>
+                    <span class="text-gray-200 font-medium">article</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-gray-500 text-xs font-medium tracking-wide uppercase">hunyuan3d_buffalo.bib</span>
+                <button id="citation-copy-btn" class="citation-copy-btn" onclick="copyBibtex()">
+                    <i class="far fa-copy"></i> Copy
+                </button>
+            </div>
+
+            <pre id="bibtex-content">@article{ye2026hunyuan3d,
+  title={Hunyuan3D-Buffalo 1.0: A Unified Multimodal Model for Scalable 3D Generation, Understanding, and Editing},
+  author={Ye, Junliang and Liu, Kenkun and Wang, Guocun and Li, Yang and Qu, Yansong and Wang, Chunshi and Xu, Jingwei and Yang, Yunhan and Zhao, Zibo and Xu, Jiachen and others},
+  journal={arXiv preprint arXiv:2608.02711},
+  year={2026}
+}</pre>
         </div>
     </div>
 </section>
@@ -2026,6 +2224,65 @@
             }
         }, { passive: true });
     })();
+</script>
+
+<script>
+    // Left rail scroll-spy
+    (function () {
+        const links = document.querySelectorAll('.rail-link');
+        const sections = Array.from(links).map(link => document.getElementById(link.dataset.target));
+
+        function updateActiveLink() {
+            const scrollPos = window.scrollY + window.innerHeight / 2;
+            let activeIndex = 0;
+            sections.forEach((section, index) => {
+                if (section && section.offsetTop <= scrollPos) {
+                    activeIndex = index;
+                }
+            });
+            links.forEach((link, index) => {
+                link.classList.toggle('active', index === activeIndex);
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveLink, { passive: true });
+        window.addEventListener('load', updateActiveLink);
+        updateActiveLink();
+
+        // Smooth scroll for rail links
+        links.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.getElementById(this.dataset.target);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Logo and top button scroll to top
+        document.querySelector('.rail-logo').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        document.getElementById('rail-top-btn').addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    })();
+
+    // BibTeX copy
+    function copyBibtex() {
+        const pre = document.getElementById('bibtex-content');
+        const btn = document.getElementById('citation-copy-btn');
+        navigator.clipboard.writeText(pre.textContent).then(() => {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="far fa-copy"></i> Copy';
+            }, 2000);
+        });
+    }
 </script>
 
 </body>
