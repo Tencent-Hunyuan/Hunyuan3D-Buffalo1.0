@@ -548,7 +548,7 @@
         z-index: 50;
         display: none;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         padding: 1rem 0.5rem;
         border-radius: 9999px;
         background: rgba(17, 17, 19, 0.92);
@@ -556,6 +556,13 @@
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        transition: border-radius 0.3s ease, padding 0.3s ease;
+        overflow: hidden;
+    }
+
+    #left-rail:hover {
+        border-radius: 1rem;
+        padding: 1rem 0.75rem;
     }
 
     @media (min-width: 1280px) {
@@ -564,9 +571,7 @@
         }
     }
 
-    .rail-logo,
-    .rail-link,
-    .rail-icon {
+    .rail-logo {
         width: 2.25rem;
         height: 2.25rem;
         display: flex;
@@ -574,13 +579,10 @@
         justify-content: center;
         border-radius: 0.75rem;
         transition: all 0.25s ease;
-    }
-
-    .rail-logo {
         background: rgba(255, 255, 255, 0.08);
         color: #fff;
         font-size: 1rem;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.25rem;
     }
 
     .rail-logo:hover {
@@ -588,12 +590,18 @@
     }
 
     .rail-link {
+        display: flex;
+        align-items: center;
+        height: 2.25rem;
+        padding: 0 0.5rem;
         margin: 0.2rem 0;
         font-size: 0.75rem;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.4);
         border-radius: 9999px;
         text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
     }
 
     .rail-link:hover {
@@ -607,25 +615,58 @@
         box-shadow: 0 0 14px rgba(0, 231, 255, 0.18);
     }
 
-    .rail-icon {
+    .rail-link .rail-num {
+        min-width: 1.5rem;
+        text-align: center;
+    }
+
+    .rail-label {
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+    }
+
+    #left-rail:hover .rail-label {
+        max-width: 160px;
+        opacity: 1;
+        margin-left: 0.6rem;
+    }
+
+    .rail-icon-link {
+        display: flex;
+        align-items: center;
+        height: 2.25rem;
+        padding: 0 0.5rem;
         margin: 0.2rem 0;
         font-size: 0.95rem;
         color: rgba(255, 255, 255, 0.45);
-        background: transparent;
-        border: none;
-        cursor: pointer;
+        border-radius: 9999px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
     }
 
-    .rail-icon:hover {
+    .rail-icon-link:hover {
         color: var(--primary);
         background: rgba(0, 231, 255, 0.08);
     }
 
+    .rail-icon-link i {
+        min-width: 1.5rem;
+        text-align: center;
+    }
+
     .rail-divider {
-        width: 1px;
-        height: 1.5rem;
+        width: 2rem;
+        height: 1px;
         background: rgba(255, 255, 255, 0.1);
-        margin: 0.5rem 0;
+        margin: 0.4rem 0;
+        transition: width 0.3s ease;
+    }
+
+    #left-rail:hover .rail-divider {
+        width: 100%;
     }
 
     /* Citation section */
@@ -691,18 +732,31 @@
             <i class="fa-solid fa-cube"></i>
         </a>
         <div class="rail-divider"></div>
-        <a href="#showcase" class="rail-link active" data-target="showcase">01</a>
-        <a href="#pipeline" class="rail-link" data-target="pipeline">02</a>
-        <a href="#editing" class="rail-link" data-target="editing">03</a>
-        <a href="#models" class="rail-link" data-target="models">04</a>
-        <a href="#part-explode" class="rail-link" data-target="part-explode">05</a>
-        <div class="rail-divider"></div>
-        <a href="#citation" class="rail-icon" aria-label="Citation">
-            <i class="fa-regular fa-file-lines"></i>
+        <a href="#intro-video" class="rail-link active" data-target="intro-video">
+            <span class="rail-num">01</span>
+            <span class="rail-label">Overview</span>
         </a>
-        <button id="rail-top-btn" class="rail-icon" aria-label="Back to top">
-            <i class="fa-regular fa-sun"></i>
-        </button>
+        <a href="#pipeline" class="rail-link" data-target="pipeline">
+            <span class="rail-num">02</span>
+            <span class="rail-label">Pipeline</span>
+        </a>
+        <a href="#editing" class="rail-link" data-target="editing">
+            <span class="rail-num">03</span>
+            <span class="rail-label">3D Editing</span>
+        </a>
+        <a href="#models" class="rail-link" data-target="models">
+            <span class="rail-num">04</span>
+            <span class="rail-label">3D Models</span>
+        </a>
+        <a href="#part-explode" class="rail-link" data-target="part-explode">
+            <span class="rail-num">05</span>
+            <span class="rail-label">Part-Extraction</span>
+        </a>
+        <div class="rail-divider"></div>
+        <a href="#citation" class="rail-icon-link" data-target="citation" aria-label="Arxiv">
+            <i class="fa-regular fa-file-lines"></i>
+            <span class="rail-label">Arxiv</span>
+        </a>
     </nav>
 
     <!-- Hero Section -->
@@ -804,7 +858,7 @@
     </div>
 </section>
 
-<!-- Image Showcase -->
+<!-- Overview (Image Showcase) -->
 <section id="showcase" class="py-20 bg-black px-6">
     <div class="max-w-6xl mx-auto text-center">
         <div class="mb-12 fade-in">
@@ -1175,10 +1229,10 @@
     </div>
 </section>
 
-<!-- Citation Section -->
+<!-- Arxiv / Citation Section -->
 <section id="citation" class="py-20 bg-black px-6">
     <div class="max-w-4xl mx-auto fade-in">
-        <h2 class="text-3xl md:text-4xl font-bold mb-10 text-white">Citation</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-10 text-white">Arxiv</h2>
 
         <div class="citation-card p-6 md:p-8">
             <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mb-6 text-sm">
@@ -2261,14 +2315,23 @@
             });
         });
 
-        // Logo and top button scroll to top
+        // Logo scroll to top
         document.querySelector('.rail-logo').addEventListener('click', function (e) {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-        document.getElementById('rail-top-btn').addEventListener('click', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+
+        // Arxiv icon smooth scroll
+        const arxivLink = document.querySelector('.rail-icon-link');
+        if (arxivLink) {
+            arxivLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.getElementById(this.dataset.target);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
     })();
 
     // BibTeX copy
